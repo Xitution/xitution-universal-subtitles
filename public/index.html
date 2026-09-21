@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xitution Universal Subtitles V2</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:#0c0d11;color:#fff;
+    font-family:Inter,Arial,Helvetica,sans-serif;
+  }
+  main{max-width:1320px;margin:auto;padding:34px 20px 80px}
+  h1{font-size:clamp(34px,5vw,66px);margin:0 0 8px;letter-spacing:-.035em}
+  p{color:#aeb3bd;line-height:1.55;max-width:900px}
+  .card{
+    margin-top:25px;padding:15px;
+    border:1px solid #262a34;border-radius:24px;
+    background:#13151c;box-shadow:0 25px 70px #0006
+  }
+  .video-shell{position:relative;border-radius:18px;overflow:hidden;background:#000}
+  video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+  .inputs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  input{
+    flex:1;min-width:260px;background:#0b0d12;color:#fff;
+    border:1px solid #343947;border-radius:12px;padding:13px 14px
+  }
+  button{
+    border:0;border-radius:12px;background:#fff;color:#111;
+    padding:12px 17px;font-weight:800;cursor:pointer
+  }
+  .hint{font-size:13px;color:#7f8794}
+</style>
+</head>
+<body>
+<main>
+  <h1>Xitution Universal Subtitles V2</h1>
+  <p>Genau der gewünschte Look: große, fette weiße Schrift, zentriert auf einem breiten halbtransparenten schwarzen Balken direkt über dem Video. Der Layer passt sich automatisch an Desktop und Smartphone an.</p>
+
+  <div class="card">
+    <div class="video-shell">
+      <video id="demoVideo" controls playsinline crossorigin="anonymous"></video>
+    </div>
+    <div class="inputs">
+      <input id="url" placeholder="Öffentliche MP4/WebM-URL einfügen">
+      <button id="load">Video laden</button>
+    </div>
+    <div class="inputs">
+      <input id="file" type="file" accept="video/*">
+    </div>
+    <div class="hint">Bei GoHighLevel wird später nur das Script eingebunden. Der Untertitel-Layer wird automatisch auf erkannte HTML5-Videos gelegt.</div>
+  </div>
+</main>
+
+<script>
+const video=document.querySelector("#demoVideo");
+document.querySelector("#load").onclick=()=>{
+  const u=document.querySelector("#url").value.trim();
+  if(!u)return;
+  video.dataset.xitutionCaptionSrc=u;
+  video.src=u;
+  video.load();
+};
+document.querySelector("#file").onchange=e=>{
+  const f=e.target.files?.[0];
+  if(!f)return;
+  video.src=URL.createObjectURL(f);
+  video.load();
+};
+</script>
+
+<script
+  src="/captions.js"
+  data-api-base=""
+  data-default-lang="de"
+  data-auto-open="true">
+</script>
+</body>
+</html>

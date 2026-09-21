@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Subtitle Design Preview</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0c0d10;font-family:Inter,Arial,sans-serif;color:#fff}
+.stage{
+  width:min(1500px,96vw);aspect-ratio:16/9;margin:4vh auto;
+  position:relative;overflow:hidden;border-radius:18px;
+  background:
+    radial-gradient(circle at 75% 30%,#e8e4dd 0 8%,transparent 30%),
+    linear-gradient(140deg,#8b8f8b,#c9c0b4 43%,#7b6759 100%);
+  box-shadow:0 30px 100px #0009;
+}
+.fake-video{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(22px,3vw,48px);font-weight:800;color:#ffffff77;
+}
+.caption{
+  position:absolute;left:3%;right:3%;bottom:9%;
+  background:rgba(20,18,18,.72);
+  backdrop-filter:blur(5px);
+  border-radius:clamp(12px,1.35vw,24px);
+  padding:clamp(12px,1.5vw,25px) clamp(18px,2.2vw,42px);
+  box-shadow:0 7px 24px #0003;
+}
+.caption p{
+  margin:0;color:white;text-align:center;
+  font-weight:800;font-size:clamp(22px,3.25vw,62px);
+  line-height:1.18;letter-spacing:-.018em;text-shadow:0 2px 5px #0007;
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="fake-video">VIDEO</div>
+  <div class="caption">
+    <p>Now comes the next progression in our methodical series.</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!--
+XITUTION UNIVERSAL SUBTITLES V2
+Design: breiter halbtransparenter schwarzer Balken + große weiße Bold-Schrift,
+zentriert wie in deiner Referenz.
+
+1. YOUR-SERVER ersetzen.
+2. Diesen Block in GoHighLevel als Footer / Custom JS einfügen.
+3. Das Script erkennt HTML5-<video>-Elemente automatisch.
+-->
+
+<script
+  src="https://YOUR-SERVER/captions.js"
+  data-api-base="https://YOUR-SERVER"
+  data-default-lang="de"
+  data-auto-open="true">
+</script>
+
+<!--
+Falls bei einem Video die sichtbare src nicht die echte MP4/WebM-Adresse ist,
+kann die echte Mediendatei so angegeben werden:
+
+<video
+  controls
+  src="https://cdn.example.com/video.mp4"
+  data-xitution-caption-src="https://cdn.example.com/video.mp4">
+</video>
+-->
