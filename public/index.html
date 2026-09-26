@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
-<title>Xitution · Untertitel Studio</title>
+<title>Xitution · Video Studio</title>
 <style>
 :root{--bg:#0c0f12;--panel:#14191e;--border:#303840;--muted:#aab5c1;--text:#f5f8fa;--accent:#d8fae8;--ink:#0c3022;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
 *{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,input,select,a{touch-action:manipulation}button,select{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #99d4b8;outline-offset:3px}
@@ -36,13 +37,16 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
 /* Full screen must win over the inline mobile height limit. */
 .preview:fullscreen{--preview-height:100vh}
 @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+
+.form-row{grid-template-columns:1fr 1fr 1fr}.action-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.action-row .generate{width:100%;height:auto;min-height:54px;white-space:normal;line-height:1.3}.generate.subtitle{background:#29343d;color:#f5f8fa;border:1px solid #465761}.voice-note{margin:12px 0 0;padding:12px 14px;border:1px solid #304b41;background:#12241d;border-radius:12px;font-size:13px;line-height:1.6;color:#ccebdc}.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#c0ccd4;line-height:1.6;margin-top:13px}.check input{min-height:0;margin-top:5px;accent-color:#a6e5c2;flex-shrink:0}.provider{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:13px}.provider-status{font-size:12px;padding:8px 11px;border:1px solid #59636d;border-radius:999px;color:#c1ccd5}.provider-status[data-ok=true]{border-color:#52826b;background:#163325;color:#d2f9e3}.api-guide{border:1px solid #3a4750;padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.7}.api-guide summary{color:#e7eff5;font-weight:700}.api-guide code{font-size:13px;color:#dcf8e7;overflow-wrap:anywhere}.api-guide a{color:#c2f0db}.result-bar{margin-top:16px;padding:14px;border:1px solid #467e63;background:#11271c;border-radius:13px}.result-bar strong{font-size:14px}.result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.result-actions a{padding:12px 16px;border-radius:10px;background:#d8fae8;color:#0c3022;text-decoration:none;font-weight:750;font-size:13px}.result-actions button{font-size:13px}.result-bar p{font-size:12px;line-height:1.5;color:#bbcdc2;margin-bottom:0}.playback-note{font-size:12px;line-height:1.6;margin:10px 0 0;color:#b2c3d0}
+@media(max-width:700px){.form-row,.action-row{grid-template-columns:1fr}.action-row{gap:10px}.provider{align-items:stretch}.result-actions{flex-direction:column}.result-actions a{text-align:center}.brand{letter-spacing:.13em}.check{font-size:12px}}
 </style>
 </head>
 <body>
 <main>
-<header class="top"><span class="brand">XITUTION</span><span class="version">Untertitel Studio · 2.2</span></header>
+<header class="top"><span class="brand">XITUTION</span><span class="version">Video Studio · 2.3</span></header>
 <h1>Dein Video. Deine Sprache.</h1>
-<p class="intro">Querformat oder Hochformat laden. Sprache wählen. Untertitel generieren.</p>
+<p class="intro">Video laden. Gesprochene Sprache und Untertitel getrennt auswählen.</p>
 <div class="format-bar" aria-label="Unterstützte Videoformate">
   <div class="format-types">
     <span class="format-badge" id="formatWide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>16:9 · Querformat</span>
@@ -74,11 +78,28 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
   </div>
   <p id="sourceName">Noch kein Video ausgewählt. Es wurde noch nichts an den Server gesendet.</p>
   <div class="form-row">
-    <label class="field" for="sourceLanguage">02 · Im Video gesprochen<select id="sourceLanguage"><option value="auto">Automatisch erkennen</option></select></label>
-    <label class="field" for="targetLanguage">Untertitel anzeigen auf<select id="targetLanguage"><option value="original">Originalsprache · keine Übersetzung</option></select></label>
-    <button id="generate" type="button" class="generate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></svg><span id="generateLabel">Untertitel generieren</span></button>
+    <label class="field" for="sourceLanguage">02 · Originalsprache im Video<select id="sourceLanguage"><option value="auto">Automatisch erkennen</option></select></label>
+    <label class="field" for="audioLanguage">03 · Gesprochene Zielsprache<select id="audioLanguage"></select></label>
+    <label class="field" for="targetLanguage">04 · Untertitelsprache<select id="targetLanguage"><option value="original">Sprache der Vorschau · unverändert</option></select></label>
   </div>
-  <p class="fineprint">Die Audiospur wird zur Spracherkennung an OpenAI gesendet; für Übersetzungen zusätzlich der Text. Dabei können API-Kosten entstehen. Bitte nur Videos mit den nötigen Nutzungsrechten verarbeiten.</p>
+  <p class="voice-note"><strong>Stimme: aus deinem Originalvideo.</strong> ElevenLabs Dubbing erstellt die gesprochene Übersetzung. Es wird keine Browserstimme verwendet. Eine von ElevenLabs gemeldete Ersatzstimme wird nicht stillschweigend als passende Fassung ausgegeben. Keine Lippenanimation.</p>
+  <label class="check"><input id="dubConsent" type="checkbox"><span>Ich habe die nötigen Video- und Stimmrechte und bestätige die kostenpflichtige Verarbeitung der Audiospur durch ElevenLabs.</span></label>
+  <div class="action-row">
+    <button id="dub" type="button" class="generate"><span id="dubLabel">Video übersetzen · ElevenLabs</span></button>
+    <button id="generate" type="button" class="generate subtitle"><span id="generateLabel">Untertitel generieren</span></button>
+  </div>
+  <div class="provider"><span class="provider-status" id="elevenStatus">ElevenLabs · Serverstatus wird geprüft …</span><span class="provider-status" id="openaiStatus">Untertitel · Serverstatus wird geprüft …</span></div>
+  <details class="api-guide" id="apiGuide"><summary>Wo hinterlege ich den ElevenLabs-API-Schlüssel?</summary>
+    <p>Bei ElevenLabs unter <a href="https://elevenlabs.io/app/developers/api-keys" target="_blank" rel="noopener noreferrer">Developers → API Keys</a> einen Schlüssel mit Dubbing-Berechtigung erstellen. Dann im bestehenden Render-Dienst unter <strong>Environment → Add Environment Variable</strong> ergänzen:</p>
+    <p><code>ELEVENLABS_API_KEY = dein ElevenLabs-Schlüssel</code></p><p>Speichern und neu bereitstellen. <code>OPENAI_API_KEY</code> bleibt für die Untertitel bestehen. Keine API-Schlüssel in diese Seite, GitHub oder den Chat eintragen.</p>
+  </details>
+  <p class="fineprint">Der Sprachwechsel im Auswahlfeld allein verändert noch keinen Ton. „Video übersetzen“ erzeugt eine neue MP4 mit übersetzter Audiospur. „Untertitel generieren“ verarbeitet die aktuell angezeigte Fassung mit OpenAI; dabei können weitere API-Kosten entstehen.</p>
+  <p id="playbackNote" class="playback-note">Vorschau: Originalvideo.</p>
+  <div id="dubResult" class="result-bar" hidden>
+    <strong id="dubResultTitle">Vertonte Fassung fertig</strong>
+    <div class="result-actions"><button id="showOriginal" type="button" class="secondary">Original anzeigen</button><button id="showDubbed" type="button" class="secondary">Vertonte Fassung anzeigen</button><a id="downloadVideo" href="#" download>MP4 herunterladen</a></div>
+    <p id="dubWarnings"></p><p>MP4 mit neuer Audiospur, ohne eingebrannte Untertitel. Jetzt bei Bedarf Untertitel für diese Fassung generieren. Download zeitnah sichern; die Serverdatei ist nur vorübergehend verfügbar.</p>
+  </div>
   <div id="warning" class="notice" hidden></div>
   <div id="feedback" class="feedback" role="status" aria-live="polite" hidden>
     <div class="feedback-line"><span id="spinner" class="spinner" hidden aria-hidden="true"></span><strong id="statusText"></strong></div>
@@ -92,19 +113,20 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
   </div>
   <div id="activeLanguage" class="active-language">Anzeige: noch keine Untertitel erzeugt.</div>
 </section>
-<p class="foot">Automatische Untertitel können Fehler enthalten. Fachbegriffe und Zeitcodes vor Veröffentlichung prüfen.<br>Vorschau im Originalformat · SRT-Export, kein eingebranntes MP4 · kein Zugriff auf fremde Browser-Tabs oder geschützte Player.</p>
+<p class="foot">Automatische Untertitel können Fehler enthalten. Fachbegriffe und Zeitcodes vor Veröffentlichung prüfen.<br>16:9 und 9:16 · MP4 mit übersetzter Audiospur · Untertitel als Overlay und SRT, nicht eingebrannt · kein Zugriff auf geschützte Player.</p>
 </main>
 <script>
 'use strict';
 (() => {
   const $=id=>document.getElementById(id);
-  const LANGS=[['de','Deutsch'],['en','English'],['zh','中文 · Chinesisch'],['es','Español'],['pt','Português'],['fr','Français'],['it','Italiano'],['ar','العربية · Arabisch'],['tr','Türkçe'],['pl','Polski'],['ru','Русский'],['ja','日本語'],['ko','한국어'],['nl','Nederlands'],['cs','Čeština'],['ro','Română']];
-  const ENGLISH_NAMES={german:'de',english:'en',chinese:'zh',spanish:'es',portuguese:'pt',french:'fr',italian:'it',arabic:'ar',turkish:'tr',polish:'pl',russian:'ru',japanese:'ja',korean:'ko',dutch:'nl',czech:'cs',romanian:'ro'};
-  for(const [value,label] of LANGS){$('sourceLanguage').add(new Option(label,value));$('targetLanguage').add(new Option(label,value));}
-  $('targetLanguage').value='de';
+  const LANGS=[['de','Deutsch'],['en','English'],['zh','中文 · Chinesisch'],['es','Español'],['pt','Português'],['fr','Français'],['it','Italiano'],['ar','العربية · Arabisch'],['tr','Türkçe'],['pl','Polski'],['ru','Русский'],['ja','日本語'],['ko','한국어'],['nl','Nederlands'],['cs','Čeština'],['ro','Română'],['hi','हिन्दी · Hindi'],['vi','Tiếng Việt'],['id','Bahasa Indonesia']];
+  const ENGLISH_NAMES={german:'de',english:'en',chinese:'zh',spanish:'es',portuguese:'pt',french:'fr',italian:'it',arabic:'ar',turkish:'tr',polish:'pl',russian:'ru',japanese:'ja',korean:'ko',dutch:'nl',czech:'cs',romanian:'ro',hindi:'hi',vietnamese:'vi',indonesian:'id'};
+  for(const [value,label] of LANGS){$('sourceLanguage').add(new Option(label,value));$('targetLanguage').add(new Option(label,value));$('audioLanguage').add(new Option(label,value));}
+  $('targetLanguage').value='en';$('audioLanguage').value='en';
   const video=$('video'), stage=$('stage'), preview=$('preview');
   let source=null, objectURL='', busy=false, epoch=0, current=null, sourceCache=null;
   let captionsEnabled=true, renderCues=[], lastCaption='', health=null, needToken=false, startTime=0, clock=null;
+  let dubResult=null, playback='original';
   const translated=new Map();
   const label=lang=>lang==='original'?'Originalsprache':(LANGS.find(x=>x[0]===lang)?.[1]||lang||'Originalsprache');
   const detectedCode=lang=>ENGLISH_NAMES[String(lang||'').toLowerCase()]||lang;
@@ -125,8 +147,8 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
   function elapsed(){const s=Math.floor((Date.now()-startTime)/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} min`;}
   function setBusy(value){
     busy=value;
-    for(const id of ['load','choose','file','url','sourceLanguage','targetLanguage','generate','access'])$(id).disabled=value;
-    $('generateLabel').textContent=value?'Wird erstellt …':'Untertitel generieren';
+    for(const id of ['load','choose','file','url','sourceLanguage','targetLanguage','audioLanguage','generate','dub','dubConsent','showOriginal','showDubbed','access'])$(id).disabled=value;
+    $('generateLabel').textContent=value?'Bitte warten …':'Untertitel generieren';$('dubLabel').textContent=value?'Bitte warten …':'Video übersetzen · ElevenLabs';
     if(clock)clearInterval(clock);clock=null;
     if(value){startTime=Date.now();clock=setInterval(()=>{if($('feedback').dataset.kind==='busy')$('statusSub').textContent=`Bitte diesen Tab geöffnet lassen · ${elapsed()}. Die Dauer hängt von Dateigröße und Server ab.`;},1000);}
   }
@@ -136,7 +158,7 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
     try{r=await fetch(endpoint,{...options,headers:{...authHeaders(),...(options.headers||{})},cache:'no-store',signal:AbortSignal.timeout(timeout)});}
     catch(e){throw new Failure({error:'Der Server ist nicht erreichbar oder die Anfrage hat zu lange gedauert. Bitte den Render-Status prüfen.',code:'NETWORK_ERROR',details:e.message});}
     let data;
-    try{data=await r.json();}catch{throw new Failure({error:'Der Server hat keine lesbare Antwort geliefert. Bitte prüfen, ob server.mjs aus Update 2.1 bereitgestellt ist.',code:'SERVER_RESPONSE',details:`HTTP ${r.status}`});}
+    try{data=await r.json();}catch{throw new Failure({error:'Der Server hat keine lesbare Antwort geliefert. Bitte prüfen, ob server.mjs aus Update 2.3 bereitgestellt ist.',code:'SERVER_RESPONSE',details:`HTTP ${r.status}`});}
     if(!r.ok)throw new Failure(data);
     return data;
   }
@@ -159,14 +181,14 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
   }
   function clearCaptions(){current=null;renderCues=[];lastCaption='';$('caption').hidden=true;$('captionText').textContent='';$('download').disabled=true;$('activeLanguage').textContent='Anzeige: noch keine Untertitel erzeugt.';}
   function resetSource(newSource){
-    epoch++;source=newSource;sourceCache=null;translated.clear();clearCaptions();video.pause();
+    epoch++;source=newSource;sourceCache=null;translated.clear();clearCaptions();video.pause();dubResult=null;playback='original';$('dubResult').hidden=true;$('playbackNote').textContent='Vorschau: Originalvideo.';
     clearVideoFormat();
     if(objectURL){URL.revokeObjectURL(objectURL);objectURL='';}
     if(newSource.kind==='file'){objectURL=URL.createObjectURL(newSource.file);video.src=objectURL;}
     else video.src=newSource.url;
     video.load();$('empty').hidden=true;
     $('sourceName').textContent=newSource.kind==='file'?`Ausgewählt: ${newSource.file.name} · ${(newSource.file.size/1024/1024).toFixed(1)} MB. Upload erst beim Generieren.`:'Video-URL geladen. Die Untertitelerstellung startet erst beim Generieren.';
-    status('Video ausgewählt. Jetzt Sprache festlegen und „Untertitel generieren“ klicken.');
+    status('Video ausgewählt. Gesprochene Zielsprache wählen und „Video übersetzen“ klicken – oder nur Untertitel erzeugen.');
   }
   function clearVideoFormat(){
     stage.style.setProperty('--video-aspect',String(16/9));
@@ -321,14 +343,15 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
       if($('url').value.trim()&&(!source||source.kind!=='url'||source.url!==$('url').value.trim()))loadURL();
       if(!source)throw new Failure({error:'Bitte zuerst eine Videodatei auswählen oder eine Video-URL einfügen.',code:'NO_SOURCE'});
       if(needToken&&!$('access').value.trim()){ $('authRow').hidden=false;throw new Failure({error:'Bitte den Xitution-Zugangscode eingeben. Er ist nicht dein OpenAI-API-Schlüssel.',code:'ACCESS_REQUIRED'});}
-      if(health&&health.version!=='2.1.0')throw new Failure({error:'Bitte auch die neue server.mjs hochladen. Die HTML-Oberfläche allein korrigiert den alten Übersetzungsaufruf nicht.',code:'SERVER_UPDATE_REQUIRED',details:'Erwartet: 2.1.0 · Server: '+health.version});
+      if(health&&health.version!=='2.3.0')throw new Failure({error:'Bitte auch die neue server.mjs hochladen. Die HTML-Oberfläche allein korrigiert den alten Übersetzungsaufruf nicht.',code:'SERVER_UPDATE_REQUIRED',details:'Erwartet: 2.3.0 · Server: '+health.version});
       if(health?.api_key_configured===false)throw new Failure({error:'In Render ist OPENAI_API_KEY noch nicht hinterlegt.',code:'MISSING_API_KEY'});
-      const generationEpoch=epoch, lang=$('sourceLanguage').value,target=$('targetLanguage').value;
+      const generationEpoch=epoch, lang=playback==='dubbed'?dubResult.targetLanguage:$('sourceLanguage').value,target=$('targetLanguage').value;
       video.pause();clearCaptions();setBusy(true);
       if(!sourceCache||sourceCache.requestedLanguage!==lang){
         status(source.kind==='file'?'Video wird hochgeladen …':'Video wird für die Verarbeitung geladen …','busy');
         let data;
-        if(source.kind==='file'){const form=new FormData();form.append('sourceLanguage',lang);form.append('video',source.file);data=await runTask('/api/captions/upload',form,true);}
+        if(playback==='dubbed'){data=await runTask('/api/dubbing/captions',{resultId:dubResult.resultId});}
+        else if(source.kind==='file'){const form=new FormData();form.append('sourceLanguage',lang);form.append('video',source.file);data=await runTask('/api/captions/upload',form,true);}
         else data=await runTask('/api/captions/url',{videoUrl:source.url,sourceLanguage:lang});
         data.segments=normalizeSegments(data.segments);sourceCache={...data,requestedLanguage:lang};
       }
@@ -344,6 +367,55 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
     }catch(e){error(e);if(sourceCache)$('statusSub').textContent+=' Das Originaltranskript liegt bereits vor; für eine Anzeige ohne Übersetzung „Originalsprache“ wählen.';}
     finally{setBusy(false);}
   });
+
+  function checkSource(){
+    if(nonHttp)throw new Failure({error:'Bitte das Studio über die Render-Adresse öffnen.',code:'SERVER_REQUIRED'});
+    if($('url').value.trim()&&(!source||source.kind!=='url'||source.url!==$('url').value.trim()))loadURL();
+    if(!source)throw new Failure({error:'Bitte zuerst ein Video auswählen.',code:'NO_SOURCE'});
+    if(needToken&&!$('access').value.trim())throw new Failure({error:'Bitte den Xitution-Zugangscode eingeben, nicht einen API-Schlüssel.',code:'ACCESS_REQUIRED'});
+  }
+  function showVersion(version){
+    if(!source||version==='dubbed'&&!dubResult)return;
+    video.pause();playback=version;sourceCache=null;translated.clear();clearCaptions();
+    video.src=version==='dubbed'?dubResult.mediaUrl:(source.kind==='file'?objectURL:source.url);
+    video.load();
+    $('playbackNote').textContent=version==='dubbed'?`Vorschau: KI-vertonte Fassung · ${label(dubResult.targetLanguage)} · ElevenLabs. Untertitel werden für diese Audiospur erzeugt.`:'Vorschau: Originalvideo. Untertitel werden für die Original-Audiospur erzeugt.';
+  }
+  $('showOriginal').addEventListener('click',()=>showVersion('original'));
+  $('showDubbed').addEventListener('click',()=>showVersion('dubbed'));
+  $('audioLanguage').addEventListener('change',()=>status('Gesprochene Zielsprache ausgewählt. Erst „Video übersetzen“ erzeugt die neue Audiospur.'));
+  $('dub').addEventListener('click',async()=>{
+    if(busy)return;
+    try{
+      checkSource();
+      // Re-read the actual server state; an old page must not assume key validity.
+      health=await request('/health');
+      if(health.version!=='2.3.0')throw new Failure({error:'Bitte server.mjs UND public/index.html aus Update 2.3 bereitstellen.',code:'SERVER_UPDATE_REQUIRED'});
+      needToken=Boolean(health.access_token_required);
+      if(needToken&&!$('access').value.trim())throw new Failure({error:'Bitte den Xitution-Zugangscode eingeben.',code:'ACCESS_REQUIRED'});
+      if(!needToken)throw new Failure({error:'Bitte zuerst XUS_ACCESS_TOKEN in Render setzen. Deinen selbst gewählten Zugangscode nach dem Neustart im Studio eingeben.',code:'ACCESS_SETUP_REQUIRED'});
+      if(!health.elevenlabs_key_configured){$('apiGuide').open=true;throw new Failure({error:'ELEVENLABS_API_KEY fehlt in Render. Unter „Wo hinterlege ich …?“ steht die Einrichtung.',code:'MISSING_ELEVENLABS_KEY'});}
+      if(!$('dubConsent').checked)throw new Failure({error:'Bitte die Video-/Stimmrechte und ElevenLabs-Kosten mit dem Häkchen bestätigen.',code:'CONSENT_REQUIRED'});
+      const lang=$('sourceLanguage').value,target=$('audioLanguage').value;
+      if(lang===target)throw new Failure({error:'Die Originalsprache und die gesprochene Zielsprache sind gleich. Dafür genügt die Originalfassung.',code:'SAME_AUDIO_LANGUAGE'});
+      const currentEpoch=epoch;
+      setBusy(true);video.pause();status('Video wird für die gesprochene Übersetzung vorbereitet …','busy');
+      let data;
+      if(source.kind==='file'){
+        const form=new FormData();form.append('sourceLanguage',lang);form.append('targetLanguage',target);form.append('consent','true');form.append('video',source.file);
+        data=await runTask('/api/dubbing/upload',form,true);
+      }else data=await runTask('/api/dubbing/url',{videoUrl:source.url,sourceLanguage:lang,targetLanguage:target,consent:true});
+      if(epoch!==currentEpoch)return;
+      if(!data.resultId||typeof data.mediaUrl!=='string'||!data.mediaUrl.startsWith('/media/'))throw new Failure({error:'Die fertige Video-Adresse fehlt in der Serverantwort.',code:'DUB_RESULT_INVALID'});
+      dubResult=data;$('dubResult').hidden=false;
+      $('dubResultTitle').textContent=`Vertonte Fassung fertig · ${label(data.targetLanguage)}`;
+      $('dubWarnings').textContent=(data.warnings||[]).join(' · ');
+      $('downloadVideo').href=data.mediaUrl+'?download=1';$('downloadVideo').download=`xitution-${data.targetLanguage}.mp4`;
+      showVersion('dubbed');
+      status('Die neue Videofassung ist fertig. Jetzt abspielen und die Übersetzung prüfen.','success','Die Vorschau verwendet die neue Audiospur. Untertitel lassen sich mit dem zweiten Button unabhängig erzeugen.');
+    }catch(e){error(e);}finally{setBusy(false);}
+  });
+
   function timestamp(t){let n=Math.max(0,Math.round(t*1000));const ms=n%1000;n=Math.floor(n/1000);const s=n%60;n=Math.floor(n/60);const m=n%60;const h=Math.floor(n/60);return [h,m,s].map(v=>String(v).padStart(2,'0')).join(':')+','+String(ms).padStart(3,'0');}
   $('download').addEventListener('click',()=>{
     if(!current)return;
@@ -351,11 +423,13 @@ main{width:min(1160px,calc(100% - 40px));margin:0 auto;padding:24px 0 48px}.top{
     const u=URL.createObjectURL(new Blob(['\uFEFF'+text],{type:'application/x-subrip;charset=utf-8'}));
     const a=document.createElement('a');a.href=u;a.download=`xitution-untertitel-${current.lang}.srt`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
   });
-  if(nonHttp){$('warning').hidden=false;$('warning').textContent='Lokale Ansicht: Das Design ist sichtbar. Die Verarbeitung funktioniert erst auf deinem Render-Server. Kein API-Schlüssel gehört in diese HTML-Datei.';}
+  if(nonHttp){$('elevenStatus').textContent='ElevenLabs · nur lokale Ansicht';$('openaiStatus').textContent='Untertitel · nur lokale Ansicht';$('warning').hidden=false;$('warning').textContent='Lokale Ansicht: Das Design ist sichtbar. Die Verarbeitung funktioniert erst auf deinem Render-Server. Kein API-Schlüssel gehört in diese HTML-Datei.';}
   else request('/health',{},60000).then(data=>{
     health=data;needToken=Boolean(data.access_token_required);$('authRow').hidden=!needToken;
-    if(data.version!=='2.1.0'){$('warning').hidden=false;$('warning').textContent='Die neue Oberfläche ist geladen. Bitte zusätzlich server.mjs aus Update 2.1 bereitstellen; der Server meldet noch Version '+data.version+'.';}
-    else if(!needToken){$('warning').hidden=false;$('warning').textContent='Testmodus ohne Zugangsschutz. Vor öffentlicher Freigabe XUS_ACCESS_TOKEN in Render setzen, damit nicht Dritte auf deine Kosten generieren.';}
+    $('elevenStatus').textContent=data.elevenlabs_key_configured?'ElevenLabs · Schlüssel hinterlegt, noch nicht geprüft':'ElevenLabs · API-Schlüssel fehlt in Render';$('elevenStatus').dataset.ok=String(Boolean(data.elevenlabs_key_configured));
+    $('openaiStatus').textContent=data.api_key_configured?'Untertitel · OpenAI-Schlüssel hinterlegt':'Untertitel · OpenAI-Schlüssel fehlt';$('openaiStatus').dataset.ok=String(Boolean(data.api_key_configured));
+    if(data.version!=='2.3.0'){$('warning').hidden=false;$('warning').textContent='Die neue Oberfläche ist geladen. Bitte zusätzlich server.mjs aus Update 2.3 bereitstellen; der Server meldet noch Version '+data.version+'.';}
+    else if(!needToken){$('warning').hidden=false;$('warning').textContent='Generierung noch gesperrt: XUS_ACCESS_TOKEN in Render setzen. Danach deinen selbst gewählten Xitution-Zugangscode im Studio eingeben. So können Fremde nicht auf deine Kosten generieren.';}
   }).catch(e=>{status('Der Server konnte noch nicht geprüft werden.','info','Nach einem Ruhezustand kann Render etwas zum Starten brauchen. Beim Generieren wird die Verbindung erneut versucht.',e.message);});
 })();
 </script>
